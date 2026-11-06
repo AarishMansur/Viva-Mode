@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob:; connect-src 'self'; font-src 'self'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Viva Mode</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <!-- ────────────────────────────────────────────────────────────────
+           RAIL
+      ───────────────────────────────────────────────────────────────── -->
+      <aside class="rail" aria-label="Viva Mode">
+        <div class="rail__logo" aria-hidden="true">V.</div>
+
+        <nav class="rail__nav" aria-label="Viva progress">
+          <ol class="rail__steps">
+            <li class="rail__step" data-step="consent" aria-current="step" title="Consent">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3 19 6v5.2c0 4.3-2.9 8.1-7 9.8-4.1-1.7-7-5.5-7-9.8V6Z" />
+                <path d="m9 12 2 2 4-4.5" />
+              </svg>
+              <span class="sr-only">Consent</span>
+            </li>
+            <li class="rail__step" data-step="calibrate" title="Calibration">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="7.5" />
+                <circle cx="12" cy="12" r="2.5" />
+                <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
+              </svg>
+              <span class="sr-only">Calibration</span>
+            </li>
+            <li class="rail__step" data-step="viva" title="The viva">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="9" y="3" width="6" height="11" rx="3" />
+                <path d="M5.5 11a6.5 6.5 0 0 0 13 0" />
+                <path d="M12 17.5V21M9 21h6" />
+              </svg>
+              <span class="sr-only">The viva</span>
+            </li>
+            <li class="rail__step" data-step="report" title="Calm Report">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 20v-6M11 20V8M17 20v-9" />
+                <path d="M3 20h18" />
+              </svg>
+              <span class="sr-only">Calm Report</span>
+            </li>
+          </ol>
+        </nav>
+
+        <div class="rail__bottom">
+          <button
+            id="rail-settings"
+            class="rail__button"
+            type="button"
+            title="Settings"
+            aria-label="Settings"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="3.2" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <!-- ──────────────────────────────────────────────────────────────
+             CONSENT
+        ─────────────────────────────────────────────────────────────── -->
+        <section id="screen-consent" class="screen screen--consent" aria-labelledby="consent-title">
+          <div class="consent">
+            <header class="consent__head">
+              <div class="consent__intro">
+                <p class="eyebrow">A viva practice room · VTU CSE</p>
+                <h1 id="consent-title">Viva Mode</h1>
+                <p class="consent__lede">
+                  The examiner asks real lab-viva questions. The room softens as your breathing
+                  settles back toward your own baseline. Afterwards you get a private Calm Report.
+                </p>
+                <ul class="consent__meta" aria-label="At a glance">
+                  <li>5 questions</li>
+                  <li>60 s calibration</li>
+                  <li>Stored on this laptop</li>
+                </ul>
+              </div>
+
+              <div class="consent__preview">
+                <div class="consent__preview-art" id="consent-preview" aria-hidden="true"></div>
+                <span class="consent__preview-tag">Lab 3 · the room</span>
+              </div>
+            </header>
+
+            <div class="consent__grid">
+              <section class="consent__card" aria-labelledby="consent-camera">
+                <h2 id="consent-camera">What the camera is for</h2>
+                <p>
+                  Presage SmartSpectra reads pulse and breathing from the light reflected off your
+                  face. Frames are processed on this laptop by the SDK's native engine and are never
+                  written to disk.
+                </p>
+                <ul class="ticks">
+                  <li><b>Never recorded.</b> No video, no frames, no face landmarks are stored.</li>
+                  <li><b>Never uploaded by this app.</b> There is no account and no cloud sync.</li>
+                  <li>
+                    <b>Stored locally:</b> per-question summaries only — think time, peak pulse vs
+                    your baseline, whether you settled — in this app's data folder.
+                  </li>
+                  <li>
+                    <b>One network call:</b> the SDK contacts Presage to validate the API key and
+                    compute metrics.
+                  </li>
+                </ul>
+              </section>
+
+              <section class="consent__card consent__card--choices" aria-labelledby="consent-choices">
+                <h2 id="consent-choices">Your choices</h2>
+
+                <label class="field">
+                  <span class="field__label">Presage API key</span>
+                  <input
+                    id="api-key"
+                    type="password"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="paste your key from physiology.presagetech.com"
+                  />
+                  <span class="field__hint" id="api-key-hint">
+                    Stored encrypted with your OS keychain. Used only by the SDK.
+                  </span>
+                </label>
+
+                <label class="check">
+                  <input id="opt-telemetry" type="checkbox" />
+                  <span>
+                    <b>Send SDK telemetry (off by default)</b>
+                    <small>
+                      One aggregate summary per session: SDK version, platform, frame throughput,
+                      counts of validation warnings. No frames, no metric values, no identifiers.
+                      Turned off, the SDK transmits nothing.
+                    </small>
+                  </span>
+                </label>
+
+                <div class="consent__actions">
+                  <button id="btn-begin" class="btn btn--primary" type="button">
+                    Turn on camera &amp; calibrate
+                  </button>
+                  <button id="btn-practice" class="btn btn--ghost" type="button">
+                    Practice without signals
+                  </button>
+                </div>
+
+                <p class="fineprint">
+                  The camera turns on only after you press the button. You can stop at any time and
+                  delete everything from Settings.
+                </p>
+              </section>
+            </div>
+
+            <footer class="consent__foot">
+              <p>
+                <b>Not a medical device.</b> Wellness and practice tool. SmartSpectra metrics are
+                not FDA-cleared and this app makes no diagnosis or treatment claims.
+              </p>
+              <p class="muted" id="consent-version"></p>
+            </footer>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────
+             ROOM
+        ─────────────────────────────────────────────────────────────── -->
+        <section id="screen-room" class="screen screen--room" aria-label="The viva room">
+          <div class="room-wrap">
+            <!-- the room itself -->
+            <div class="room" id="room">
+              <div class="room__wall"></div>
+              <div class="room__flicker" aria-hidden="true"><i></i></div>
+              <div class="room__window" aria-hidden="true">
+                <span class="room__window-bar"></span>
+                <span class="room__window-bar room__window-bar--v"></span>
+              </div>
+
+              <div class="prop prop--tube" aria-hidden="true">
+                <span class="tube"></span>
+                <span class="tube__flicker"></span>
+              </div>
+
+              <div class="prop prop--fan" aria-hidden="true">
+                <span class="fan__rod"></span>
+                <svg class="fan__blades" viewBox="0 0 100 100" aria-hidden="true">
+                  <g>
+                    <ellipse cx="50" cy="22" rx="12" ry="24" />
+                    <ellipse cx="50" cy="78" rx="12" ry="24" />
+                    <ellipse cx="22" cy="50" rx="24" ry="12" />
+                  </g>
+                  <circle cx="50" cy="50" r="7" />
+                </svg>
+              </div>
+
+              <div class="prop prop--silence" aria-hidden="true"><span>SILENCE</span></div>
+
+              <div class="prop prop--clock" aria-hidden="true">
+                <div class="clock">
+                  <span class="clock__hand clock__hand--h"></span>
+                  <span class="clock__hand clock__hand--m"></span>
+                </div>
+              </div>
+
+              <div class="prop prop--records" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+
+              <div class="prop prop--lamp" aria-hidden="true">
+                <span class="lamp__glow"></span>
+                <span class="lamp__arm"></span>
+                <span class="lamp__head"></span>
+              </div>
+
+              <div class="desk" aria-hidden="true"></div>
+
+              <div class="examiner" id="examiner" aria-hidden="true"></div>
+
+              <div class="pacer" id="pacer" aria-hidden="true">
+                <span class="pacer__ring"></span>
+                <span class="pacer__orb"></span>
+                <span class="pacer__count" id="pacer-count">In 4 · Out 6</span>
+              </div>
+
+              <div class="room__caption">
+                <span>Lab 3 · 2:40 PM</span>
+                <span class="room__caption-sep">·</span>
+                <span id="room-mood">external examiner</span>
+              </div>
+
+              <div class="pip" id="pip" hidden>
+                <video id="preview" muted playsinline></video>
+                <span class="pip__tag">on this laptop only</span>
+              </div>
+
+              <div class="room__status" id="room-status" hidden>
+                <span class="dot"></span><span id="room-status-text">waking the camera</span>
+              </div>
+            </div>
+
+            <!-- right-hand HUD -->
+            <aside class="hud" aria-label="Your live signals">
+              <header class="hud__head">
+                <div>
+                  <p class="hud__eyebrow">In the room</p>
+                  <h2 class="hud__title">Live signals</h2>
+                </div>
+                <span class="hud__badge">on this laptop</span>
+              </header>
+
+              <article class="qcard" id="qcard" aria-live="off">
+                <div class="qcard__head">
+                  <span class="qcard__subject" id="q-subject">Operating Systems · BCS303</span>
+                  <span class="qcard__stamp" id="q-stamp">Q. 1/5</span>
+                </div>
+                <p class="qcard__topic" id="q-topic">Module 3 · Deadlocks</p>
+                <p class="qcard__question" id="q-question">
+                  What are the four necessary conditions for a deadlock?
+                </p>
+                <p class="qcard__followup" id="q-followup" hidden></p>
+                <div class="qcard__foot">
+                  <span id="q-phase">Waiting</span>
+                  <span class="qcard__timer" id="q-timer">00:00</span>
+                </div>
+              </article>
+
+              <div class="chips" id="chips">
+                <div class="chip" id="chip-pulse" data-state="off">
+                  <span class="chip__label">Pulse</span>
+                  <span class="chip__value">—</span>
+                  <span class="chip__detail">waiting for camera</span>
+                </div>
+                <div class="chip" id="chip-breath" data-state="off">
+                  <span class="chip__label">Breathing</span>
+                  <span class="chip__value">—</span>
+                  <span class="chip__detail">waiting for camera</span>
+                </div>
+                <div class="chip" id="chip-face" data-state="off">
+                  <span class="chip__label">Face</span>
+                  <span class="chip__value">—</span>
+                  <span class="chip__detail">waiting for camera</span>
+                </div>
+              </div>
+
+              <div class="baseline-strip" id="baseline-strip" hidden>
+                <span class="baseline-strip__label">Your baseline</span>
+                <span id="baseline-values">—</span>
+              </div>
+
+              <div class="controls" id="controls">
+                <button id="btn-ask" class="btn btn--primary" type="button" hidden>
+                  Ask me a question
+                </button>
+                <button id="btn-answer-now" class="btn btn--primary" type="button" hidden>
+                  I'll answer now
+                </button>
+                <button id="btn-done-answering" class="btn btn--primary" type="button" hidden>
+                  Done answering
+                </button>
+                <button id="btn-next" class="btn btn--primary" type="button" hidden>
+                  Next question
+                </button>
+                <button id="btn-end" class="btn btn--ghost" type="button">End viva</button>
+                <button
+                  id="btn-settings"
+                  class="btn btn--icon"
+                  type="button"
+                  title="Settings"
+                  aria-label="Settings"
+                >
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3.2" />
+                    <path
+                      d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <p class="hint" id="hud-hint" role="status"></p>
+            </aside>
+          </div>
+
+          <!-- calibration overlay -->
+          <div class="calib" id="calib" hidden>
+            <div class="calib__card">
+              <p class="eyebrow">Calibration · 60 seconds</p>
+              <h2>Sit like you're waiting outside the lab.</h2>
+              <p class="calib__lede">
+                Rest your hands on your lap, look toward the camera, and breathe normally. We're
+                learning <em>your</em> baseline — there is no good or bad number.
+              </p>
+
+              <div class="ring" id="calib-ring" style="--p: 0">
+                <svg viewBox="0 0 200 200" aria-hidden="true">
+                  <circle class="ring__track" cx="100" cy="100" r="86" />
+                  <circle class="ring__fill" cx="100" cy="100" r="86" />
+                </svg>
+                <div class="ring__center">
+                  <span class="ring__time" id="calib-time">60</span>
+                  <span class="ring__unit">seconds left</span>
+                </div>
+              </div>
+
+              <ul class="calib__signals" id="calib-signals">
+                <li data-state="waiting"><span class="led"></span>Pulse <small>~12 s</small></li>
+                <li data-state="waiting"><span class="led"></span>Breathing <small>~30 s</small></li>
+                <li data-state="waiting"><span class="led"></span>HRV <small>~60 s</small></li>
+              </ul>
+
+              <p class="calib__hint" id="calib-hint" role="status">
+                Face the camera and keep still. Hints will appear here.
+              </p>
+
+              <div class="calib__actions">
+                <button id="btn-calib-cancel" class="btn btn--ghost" type="button">Cancel</button>
+                <button id="btn-calib-skip" class="btn btn--ghost" type="button" hidden>
+                  Practice without signals
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────
+             REPORT
+        ─────────────────────────────────────────────────────────────── -->
+        <section id="screen-report" class="screen screen--report" aria-labelledby="report-title">
+          <div class="report" id="report-root">
+            <header class="report__head">
+              <div>
+                <p class="eyebrow">Private · stored on this laptop</p>
+                <h1 id="report-title">Calm Report</h1>
+                <p class="report__meta" id="report-meta"></p>
+              </div>
+              <div class="report__actions">
+                <button id="btn-export" class="btn btn--ghost" type="button">Save as PNG</button>
+                <button id="btn-report-again" class="btn btn--primary" type="button">
+                  Run another viva
+                </button>
+              </div>
+            </header>
+
+            <p class="report__headline" id="report-headline"></p>
+
+            <dl class="report__tiles" id="report-tiles" aria-label="Session at a glance"></dl>
+
+            <div class="panel practice-note" id="report-practice-note" hidden>
+              <h2>Questions only</h2>
+              <p>
+                This run had no camera, so there is no pulse, breathing or timeline to show. The
+                timing notes below are still yours.
+              </p>
+            </div>
+
+            <div class="report__grid" id="report-grid">
+              <div class="panel panel--chart">
+                <h2>Session timeline</h2>
+                <p class="panel__sub">Pulse and breathing, with the question you were on.</p>
+                <div class="chart-holder"><canvas id="chart" height="240"></canvas></div>
+                <ul class="legend">
+                  <li><span class="swatch swatch--pulse"></span>Pulse (bpm)</li>
+                  <li><span class="swatch swatch--breath"></span>Breathing (per min)</li>
+                  <li><span class="swatch swatch--q"></span>Question asked</li>
+                </ul>
+              </div>
+
+              <div class="panel panel--baseline">
+                <h2>Baseline vs session</h2>
+                <dl class="stats" id="report-stats"></dl>
+                <p class="panel__note">
+                  HRV is shown only as a direction against your own baseline. The Baevsky index is
+                  not a score you should compare with anyone else.
+                </p>
+              </div>
+            </div>
+
+            <h2 class="report__section">Question by question</h2>
+            <div class="qgrid" id="report-questions"></div>
+
+            <div class="report__foot">
+              <p>
+                <b>Wellness/practice tool. Not medical advice.</b> SmartSpectra metrics are not
+                FDA-cleared. Nothing here is a diagnosis, a treatment, or a medical decision.
+              </p>
+              <p class="muted" id="report-foot-meta"></p>
+            </div>
+
+            <details class="history" id="history">
+              <summary>Past vivas on this laptop</summary>
+              <div id="history-list" class="history__list"></div>
+            </details>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────────────────────────
+             SETTINGS
+        ─────────────────────────────────────────────────────────────── -->
+        <section id="screen-settings" class="screen screen--settings" aria-labelledby="settings-title">
+          <div class="settings">
+            <header class="settings__head">
+              <div>
+                <p class="eyebrow">Everything here is local</p>
+                <h1 id="settings-title">Settings</h1>
+                <p class="settings__lede">
+                  Choose what the app keeps, how the room behaves, and which camera key it uses.
+                </p>
+              </div>
+              <button id="btn-settings-close" class="btn btn--primary" type="button">Back</button>
+            </header>
+
+            <div class="settings__grid">
+              <section class="panel" aria-labelledby="settings-data">
+                <h2 id="settings-data">Data</h2>
+                <label class="check">
+                  <input id="set-telemetry" type="checkbox" />
+                  <span>
+                    <b>SDK telemetry</b>
+                    <small>
+                      Aggregate session summary only. No frames, no metric values. Takes effect next
+                      session.
+                    </small>
+                  </span>
+                </label>
+                <label class="field">
+                  <span class="field__label">Auto-delete sessions after</span>
+                  <select id="set-autodelete">
+                    <option value="0">Keep until I delete them</option>
+                    <option value="7">7 days</option>
+                    <option value="30">30 days</option>
+                    <option value="90">90 days</option>
+                  </select>
+                </label>
+                <p class="path" id="settings-path"></p>
+                <div class="settings__row">
+                  <button id="btn-open-folder" class="btn btn--ghost" type="button">
+                    Open data folder
+                  </button>
+                  <button id="btn-delete-all" class="btn btn--danger" type="button">
+                    Delete all my data
+                  </button>
+                </div>
+              </section>
+
+              <section class="panel" aria-labelledby="settings-room">
+                <h2 id="settings-room">Room</h2>
+                <label class="check">
+                  <input id="set-reduced-motion" type="checkbox" />
+                  <span>
+                    <b>Reduced motion</b>
+                    <small>Turns the pacer into a number and stops the room's ambient animation.</small>
+                  </span>
+                </label>
+                <label class="check">
+                  <input id="set-contrast" type="checkbox" />
+                  <span>
+                    <b>High contrast</b>
+                    <small>Stronger text and chip borders for bright rooms.</small>
+                  </span>
+                </label>
+                <label class="check">
+                  <input id="set-sounds" type="checkbox" />
+                  <span>
+                    <b>Room sounds</b>
+                    <small>A quiet clock tick that fades as the room calms. Off by default.</small>
+                  </span>
+                </label>
+
+                <h2 class="settings__sub">Camera</h2>
+                <label class="field">
+                  <span class="field__label">API key</span>
+                  <input
+                    id="set-api-key"
+                    type="password"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="not set"
+                  />
+                  <span class="field__hint" id="set-api-key-hint"></span>
+                </label>
+                <div class="settings__row">
+                  <button id="btn-save-key" class="btn btn--ghost" type="button">Save key</button>
+                  <button id="btn-recalibrate" class="btn btn--ghost" type="button">
+                    Re-calibrate
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <footer class="settings__foot">
+              <p>
+                <b>Wellness/practice tool. Not medical advice.</b> SmartSpectra metrics are not
+                FDA-cleared.
+              </p>
+            </footer>
+          </div>
+        </section>
+        <div class="toast" id="toast" hidden></div>
+      </main>
+    </div>
+
+    <div class="sr-only" id="live" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
