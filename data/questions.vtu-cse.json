@@ -1,0 +1,431 @@
+{
+  "_meta": {
+    "title": "VTU CSE viva question bank",
+    "scheme": "VTU B.E. CSE 2022 scheme (CBCS)",
+    "codes": {
+      "BCS303": "Operating Systems (III semester)",
+      "BCS304": "Data Structures and Applications (III semester)",
+      "BCS401": "Analysis & Design of Algorithms (IV semester)",
+      "BCS403": "Database Management Systems (IV semester)",
+      "BCS502": "Computer Networks (V semester)"
+    },
+    "note": "Subject codes verified against the VTU 2022 scheme. Module numbers follow the standard VTU module split for each course; check your own scheme PDF if your college reorders modules. Questions are ordinary viva questions, written for this project.",
+    "version": 1
+  },
+  "questions": [
+    {
+      "id": "os-deadlock-conditions",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 3",
+      "topic": "Deadlocks",
+      "question": "What are the four necessary conditions for a deadlock?",
+      "followUp": "How would a resource-allocation graph show you one?",
+      "difficulty": "core"
+    },
+    {
+      "id": "os-semaphore-mutex",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 3",
+      "topic": "Semaphores",
+      "question": "What is a semaphore, and how does a binary semaphore differ from a mutex?",
+      "followUp": "Where can a busy-waiting semaphore go wrong?",
+      "difficulty": "core"
+    },
+    {
+      "id": "os-process-states",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 2",
+      "topic": "Process states",
+      "question": "Walk me through the five states of a process.",
+      "followUp": "Which transition never happens, and why?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "os-preemptive",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 2",
+      "topic": "CPU scheduling",
+      "question": "What is the difference between preemptive and non-preemptive scheduling?",
+      "followUp": "Which one does a hard real-time system prefer?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "os-thrashing",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 4",
+      "topic": "Virtual memory",
+      "question": "What is thrashing, and what causes it?",
+      "followUp": "What does the working-set model do about it?",
+      "difficulty": "core"
+    },
+    {
+      "id": "os-lru-belady",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 4",
+      "topic": "Page replacement",
+      "question": "Explain page replacement with LRU. Why can Belady's anomaly not happen with LRU?",
+      "followUp": "What does LRU cost you that FIFO does not?",
+      "difficulty": "stretch"
+    },
+    {
+      "id": "os-syscall",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 1",
+      "topic": "System calls",
+      "question": "What is a system call? Give two examples and say why each needs one.",
+      "followUp": "What is the difference between a system call and a library call?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "os-inode",
+      "subject": "Operating Systems",
+      "subjectCode": "BCS303",
+      "module": "Module 5",
+      "topic": "File systems",
+      "question": "What is an inode, and what does it deliberately not contain?",
+      "followUp": "How does a hard link differ from a symbolic link?",
+      "difficulty": "core"
+    },
+
+    {
+      "id": "ds-infix-postfix",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 1",
+      "topic": "Stacks",
+      "question": "Convert A + B * C into postfix and explain each step.",
+      "followUp": "Where does the stack come into it?",
+      "difficulty": "core"
+    },
+    {
+      "id": "ds-circular-queue",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 1",
+      "topic": "Queues",
+      "question": "Why does a circular queue exist? What breaks in a linear array queue?",
+      "followUp": "How do you tell a full circular queue from an empty one?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "ds-cycle-detect",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 2",
+      "topic": "Linked lists",
+      "question": "How do you detect a cycle in a singly linked list without using extra memory?",
+      "followUp": "What is the time complexity, and why?",
+      "difficulty": "core"
+    },
+    {
+      "id": "ds-bst-vs-heap",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 3",
+      "topic": "Trees",
+      "question": "What is the difference between a binary search tree and a heap?",
+      "followUp": "Which one would you use for a priority queue, and why?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "ds-traversals",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 3",
+      "topic": "Tree traversal",
+      "question": "Name the three depth-first traversals. Which one gives sorted output for a BST?",
+      "followUp": "Which traversal would you use to free the tree?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "ds-bfs-dfs",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 4",
+      "topic": "Graphs",
+      "question": "BFS and DFS: when would you reach for each?",
+      "followUp": "What data structure does each one need?",
+      "difficulty": "core"
+    },
+    {
+      "id": "ds-quicksort-worst",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 5",
+      "topic": "Sorting",
+      "question": "Why is quicksort O(n log n) on average but O(n squared) in the worst case?",
+      "followUp": "How do you avoid the worst case in practice?",
+      "difficulty": "core"
+    },
+    {
+      "id": "ds-hashing",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 5",
+      "topic": "Hashing",
+      "question": "Explain collision resolution by chaining. What is the worst-case lookup?",
+      "followUp": "When would open addressing be the better choice?",
+      "difficulty": "stretch"
+    },
+    {
+      "id": "ds-sparse-matrix",
+      "subject": "Data Structures",
+      "subjectCode": "BCS304",
+      "module": "Module 1",
+      "topic": "Arrays",
+      "question": "How would you store a sparse matrix, and what do you gain?",
+      "followUp": "What operation becomes slower with your representation?",
+      "difficulty": "core"
+    },
+
+    {
+      "id": "daa-asymptotics",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 1",
+      "topic": "Asymptotic notation",
+      "question": "Define Big-O, Big-Theta and Big-Omega with one example each.",
+      "followUp": "Which one actually describes an algorithm's running time?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "daa-exponential-order",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 1",
+      "topic": "Growth rates",
+      "question": "Is 2 to the power n plus 1 equal to O(2 to the power n)? Explain.",
+      "followUp": "Does the constant in the exponent matter for Big-O?",
+      "difficulty": "core"
+    },
+    {
+      "id": "daa-master-theorem",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 2",
+      "topic": "Divide and conquer",
+      "question": "State the master theorem and apply it to T(n) = 2T(n/2) + n.",
+      "followUp": "Which case are you in, and how do you know?",
+      "difficulty": "core"
+    },
+    {
+      "id": "daa-mergesort-list",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 2",
+      "topic": "Sorting on linked lists",
+      "question": "Why is merge sort a better fit than quicksort for a linked list?",
+      "followUp": "What extra space does your merge sort need?",
+      "difficulty": "stretch"
+    },
+    {
+      "id": "daa-kruskal-unionfind",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 3",
+      "topic": "Greedy algorithms",
+      "question": "Why does Kruskal's algorithm need a union-find structure?",
+      "followUp": "What goes wrong if you only check whether two vertices are adjacent?",
+      "difficulty": "core"
+    },
+    {
+      "id": "daa-greedy-fails",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 3",
+      "topic": "Greedy vs dynamic programming",
+      "question": "Give a problem where a greedy choice fails but dynamic programming works.",
+      "followUp": "Which property is missing in that problem?",
+      "difficulty": "stretch"
+    },
+    {
+      "id": "daa-dp-properties",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 4",
+      "topic": "Dynamic programming",
+      "question": "What two properties must a problem have before dynamic programming applies?",
+      "followUp": "How does memoisation differ from tabulation?",
+      "difficulty": "core"
+    },
+    {
+      "id": "daa-nqueens",
+      "subject": "Algorithms",
+      "subjectCode": "BCS401",
+      "module": "Module 5",
+      "topic": "Backtracking",
+      "question": "Explain N-queens with backtracking. What is the bounding function doing?",
+      "followUp": "What is the worst-case size of the state space tree?",
+      "difficulty": "core"
+    },
+
+    {
+      "id": "dbms-weak-entity",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 1",
+      "topic": "ER model",
+      "question": "What is the difference between a weak entity and a strong entity?",
+      "followUp": "How does a weak entity get its primary key?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "dbms-keys",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 2",
+      "topic": "Keys",
+      "question": "Explain the difference between a super key, a candidate key and a primary key.",
+      "followUp": "Can a relation have two primary keys? Why not?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "dbms-left-join",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 2",
+      "topic": "SQL joins",
+      "question": "What does a LEFT JOIN return that an INNER JOIN does not?",
+      "followUp": "When would the extra rows have NULLs in them?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "dbms-3nf",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 3",
+      "topic": "Normalisation",
+      "question": "What problem does 3NF remove that 2NF does not?",
+      "followUp": "Give me a small table that violates it.",
+      "difficulty": "core"
+    },
+    {
+      "id": "dbms-denormalise",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 3",
+      "topic": "Denormalisation",
+      "question": "When would you deliberately denormalise a schema?",
+      "followUp": "What do you have to maintain by hand once you do?",
+      "difficulty": "stretch"
+    },
+    {
+      "id": "dbms-acid",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 4",
+      "topic": "Transactions",
+      "question": "State the ACID properties. Which one does a bank transfer lean on most?",
+      "followUp": "What happens if the system crashes between the debit and the credit?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "dbms-dirty-read",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 4",
+      "topic": "Concurrency control",
+      "question": "What is a dirty read, and which isolation level prevents it?",
+      "followUp": "What is the cost of that isolation level?",
+      "difficulty": "core"
+    },
+    {
+      "id": "dbms-bplus-tree",
+      "subject": "DBMS",
+      "subjectCode": "BCS403",
+      "module": "Module 5",
+      "topic": "Indexing",
+      "question": "Why does a B+ tree beat a binary search tree for a database index?",
+      "followUp": "Why are the values kept in the leaves?",
+      "difficulty": "stretch"
+    },
+
+    {
+      "id": "cn-layering",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 1",
+      "topic": "Layered architecture",
+      "question": "Why is the network stack layered? Name one cost of layering.",
+      "followUp": "Which layer would you change to add encryption?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "cn-osi-tcpip",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 1",
+      "topic": "Reference models",
+      "question": "What is the difference between the OSI model and the TCP/IP model?",
+      "followUp": "Which one does the internet actually run on?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "cn-csma-cd",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 2",
+      "topic": "Medium access",
+      "question": "What does CSMA/CD do, and why is it not needed on switched Ethernet?",
+      "followUp": "What replaced it in full-duplex links?",
+      "difficulty": "core"
+    },
+    {
+      "id": "cn-sliding-window",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 2",
+      "topic": "Flow control",
+      "question": "How does a sliding window improve throughput over stop-and-wait?",
+      "followUp": "What limits how large the window can be?",
+      "difficulty": "core"
+    },
+    {
+      "id": "cn-router-switch",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 3",
+      "topic": "Network devices",
+      "question": "What is the difference between a router and a switch?",
+      "followUp": "Which layer does each one make its decision at?",
+      "difficulty": "warm-up"
+    },
+    {
+      "id": "cn-nat",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 3",
+      "topic": "NAT",
+      "question": "Explain how NAT works and name one thing it breaks.",
+      "followUp": "How does a peer-to-peer app get around it?",
+      "difficulty": "core"
+    },
+    {
+      "id": "cn-handshake",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 4",
+      "topic": "TCP",
+      "question": "Walk me through the TCP three-way handshake.",
+      "followUp": "Why three messages and not two?",
+      "difficulty": "core"
+    },
+    {
+      "id": "cn-url",
+      "subject": "Computer Networks",
+      "subjectCode": "BCS502",
+      "module": "Module 5",
+      "topic": "The web",
+      "question": "What happens, step by step, when you type a URL into a browser?",
+      "followUp": "Where does DNS fit into that sequence?",
+      "difficulty": "stretch"
+    }
+  ]
+}
