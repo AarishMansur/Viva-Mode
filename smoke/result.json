@@ -1,0 +1,90 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "consent screen is active",
+      "ok": true,
+      "detail": "screen-consent"
+    },
+    {
+      "name": "window.viva bridge is exposed",
+      "ok": true
+    },
+    {
+      "name": "SmartSpectra preload bridge is exposed",
+      "ok": true
+    },
+    {
+      "name": "consent shows app + SDK versions",
+      "ok": true,
+      "detail": "v1.0.0 · SmartSpectra 3.4.0 · win32-x64"
+    },
+    {
+      "name": "practice mode opens the room",
+      "ok": true,
+      "detail": "screen-room"
+    },
+    {
+      "name": "practice mode is labelled as such",
+      "ok": true,
+      "detail": "Practice mode: questions only. No vitals are read and no report is saved."
+    },
+    {
+      "name": "a question is on the card",
+      "ok": true,
+      "detail": "Explain how NAT works and name one thing it breaks."
+    },
+    {
+      "name": "the room is in the think phase",
+      "ok": true,
+      "detail": "Think it through | stamp Q. 1/5 | ask hidden true | "
+    },
+    {
+      "name": "manual answer control enters the answer phase",
+      "ok": true,
+      "detail": "Answer out loud"
+    },
+    {
+      "name": "the fifth answer ends in the Calm Report",
+      "ok": true,
+      "detail": "screen-report"
+    },
+    {
+      "name": "the report has one card per question",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "name": "the report headline is written",
+      "ok": true,
+      "detail": "Practice session — questions only, no vitals recorded."
+    },
+    {
+      "name": "the report stats rendered",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "name": "settings opens over the report",
+      "ok": true,
+      "detail": "screen-settings"
+    },
+    {
+      "name": "settings closes back to the report",
+      "ok": true,
+      "detail": "screen-report"
+    },
+    {
+      "name": "--calm stays within 0..1",
+      "ok": true,
+      "detail": "0.000"
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "consoleErrors": [],
+  "screenshots": "D:\\Projects\\viva-mode\\smoke"
+}
