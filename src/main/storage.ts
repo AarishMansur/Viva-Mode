@@ -1,13 +1,3 @@
-// src/main/storage.ts
-// Local-only persistence. Everything lives under app.getPath('userData'):
-//
-//   userData/
-//     settings.json        preferences (no vitals)
-//     api-key.bin          OS-encrypted API key (safeStorage), never leaves disk
-//     sessions/<id>.json   one file per viva, summaries only
-//
-// There is no database, no account, and no network write. "Delete all my data"
-// removes the whole tree and recreates an empty one.
 
 import { app, safeStorage } from 'electron';
 import { promises as fs } from 'node:fs';
@@ -24,6 +14,8 @@ import { DEFAULT_SETTINGS } from '../shared/types';
 const KEY_FILE = 'api-key.bin';
 const KEY_PLAIN_FILE = 'api-key.txt';
 const SETTINGS_FILE = 'settings.json';
+
+const SIGNAL_LOG_FILE = 'signal-log.jsonl';
 
 export function dataDir(): string {
   return app.getPath('userData');
@@ -109,6 +101,24 @@ export async function readApiKey(): Promise<{ key: string | null; source: 'setti
 export async function clearApiKey(): Promise<void> {
   await fs.rm(path.join(dataDir(), KEY_FILE), { force: true });
   await fs.rm(path.join(dataDir(), KEY_PLAIN_FILE), { force: true });
+}
+
+// --- signal proof log -------------------------------------------------------
+// One JSON object per line. The renderer decides what is safe to write (see
+// SignalLogRow): summaries only, never frames, landmarks or the API key.
+
+export function signalLogPath(): string {
+  return path.join(dataDir(), SIGNAL_LOG_FILE);
+}
+
+export async function appendSignalLog(row: unknown): Promise<void> {
+  await ensureDirs();
+  await fs.appendFile(signalLogPath(), `${JSON.stringify(row)}\n`, 'utf8');
+}
+
+export async function resetSignalLog(): Promise<void> {
+  await ensureDirs();
+  await fs.rm(signalLogPath(), { force: true });
 }
 
 // --- sessions ---------------------------------------------------------------
@@ -206,7 +216,13 @@ export async function deleteAllData(): Promise<void> {
     names = [];
   }
   // Only touch our own files, never anything else Electron keeps in userData.
-  const ours = new Set(['sessions', SETTINGS_FILE, KEY_FILE, KEY_PLAIN_FILE]);
+  const ours = new Set([
+    'sessions',
+    SETTINGS_FILE,
+    KEY_FILE,
+    KEY_PLAIN_FILE,
+    SIGNAL_LOG_FILE,
+  ]);
   for (const name of names) {
     if (!ours.has(name)) continue;
     await fs.rm(path.join(dir, name), { recursive: true, force: true }).catch(() => {});

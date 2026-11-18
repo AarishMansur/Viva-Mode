@@ -1,6 +1,3 @@
-// src/shared/format.ts
-// Number and time formatting shared by the room and the Calm Report.
-// Deliberately dependency-free so the tests can import it in plain Node.
 
 export function fmtDuration(ms: number | null): string {
   if (ms == null) return '—';

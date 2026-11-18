@@ -1,10 +1,3 @@
-// src/renderer/renderer.ts
-// The live viva: SDK wiring, the render loop, and screen orchestration.
-//
-// The renderer owns no policy. It decodes packets into a `Snapshot`, hands
-// them to the reducer in src/shared/stateMachine.ts, and paints whatever the
-// reducer says. That split is what lets the whole adaptive room be unit-tested
-// without a camera.
 
 import {
   SmartSpectraSDK,
@@ -33,6 +26,7 @@ import {
   pulseChip,
   breathingChip,
   faceChip,
+  deltaPct,
   type ChipView,
   type DecodedMetrics,
 } from '../shared/signals';
@@ -56,7 +50,6 @@ declare global {
 
 const QUESTIONS_PER_VIVA = 5;
 
-// --- tiny DOM helpers -------------------------------------------------------
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string): T =>
   document.getElementById(id) as unknown as T;
@@ -69,7 +62,6 @@ function setHtml(node: HTMLElement | null, html: string): void {
   if (node && node.innerHTML !== html) node.innerHTML = html;
 }
 
-// --- app state --------------------------------------------------------------
 
 interface Seen {
   pulse: boolean;
@@ -100,16 +92,15 @@ const app = {
   decodeErrors: 0,
   lastPacer: false,
   lastTickSound: 0,
+  lastSignalLogAt: 0,
 };
 
-// --- announcements ----------------------------------------------------------
 
 function announce(text: string): void {
   const live = $('live');
   if (!live) return;
   live.textContent = '';
-  // A microtask gap makes repeated identical strings announce again.
-  window.setTimeout(() => {
+    window.setTimeout(() => {
     live.textContent = text;
   }, 30);
 }
@@ -130,7 +121,40 @@ function toast(message: string): void {
   }, 4200);
 }
 
-// --- screens ----------------------------------------------------------------
+function logSnapshotRow(snap: Snapshot, origin?: 'talking' | 'manual'): void {
+  const v = app.viva;
+  const chip = breathingChip(app.lastSnap?.breathing ?? null, v.breathEma, {
+    warming: v.phase === 'calibrating' && !app.seen.breath,
+    talking: v.talking === true,
+    validationOk: v.validation?.code === ValidationCode.kOk,
+  });
+  window.viva.logSnapshot({
+    t: performance.now() - v.sessionStartMs,
+    sdkTsMs: snap.tsMs,
+    phase: v.phase,
+    drive: v.drive,
+    pulseRaw: snap.pulse?.value ?? null,
+    pulseStable: snap.pulse?.stable ?? false,
+    pulseConfidence: snap.pulse?.confidence ?? 0,
+    pulseEma: v.pulseEma,
+    pulseDeltaPct: v.pulseEma != null ? deltaPct(v.pulseEma, v.baseline?.pulse ?? null) : null,
+    breathRaw: snap.breathing?.value ?? null,
+    breathStable: snap.breathing?.stable ?? false,
+    breathConfidence: snap.breathing?.confidence ?? 0,
+    breathEma: v.breathEma,
+    breathDeltaPct: v.breathEma != null ? deltaPct(v.breathEma, v.baseline?.breathing ?? null) : null,
+    breathingChip: chip.state,
+    talking: snap.talking,
+    talkingStable: snap.talkingStable,
+    validationCode: v.validation?.code ?? null,
+    pacer: v.pacer,
+    calm: v.calm,
+    mood: v.mood,
+    questionIndex: v.results.length,
+    origin,
+  });
+}
+
 
 const RAIL_STEPS = ['consent', 'calibrate', 'viva', 'report'] as const;
 let lastRail = '';
@@ -278,7 +302,15 @@ function wireSdk(sdk: SmartSpectraSDK): void {
         app.seen.breath = true;
       }
       if (snap.talking != null) app.seen.face = true;
+      const before = app.viva.phase;
       step(app.viva, { type: 'SNAPSHOT', snap });
+      const phase = app.viva.phase;
+      const crossed = phase !== before;
+      const now = performance.now();
+      if (now - app.lastSignalLogAt >= T.TIMELINE_MS || crossed) {
+        app.lastSignalLogAt = now;
+        logSnapshotRow(snap, crossed && phase === 'answer' && snap.talking ? 'talking' : undefined);
+      }
       app.dirty = true;
     } catch (err) {
       app.decodeErrors += 1;
@@ -450,6 +482,9 @@ async function begin(withSignals: boolean): Promise<void> {
     return;
   }
 
+  app.lastSignalLogAt = 0;
+  await window.viva.resetSignalLog();
+
   try {
     await startSdk();
     setStatus('camera is on · processing on this laptop');
@@ -502,6 +537,12 @@ async function endSession(): Promise<void> {
     sdkVersion: app.config?.sdkVersion ?? '3.4.0',
     id: '',
   });
+
+  if (!app.viva.practiceOnly && app.config?.dataDir) {
+    const dir = app.config.dataDir;
+    const sep = dir.includes('\\') ? '\\' : '/';
+    record.signalLogPath = `${dir}${dir.endsWith('\\') || dir.endsWith('/') ? '' : sep}signal-log.jsonl`;
+  }
 
   try {
     const { id } = await window.viva.saveSession(record);
@@ -937,10 +978,12 @@ function wire(): void {
   $('btn-answer-now')?.addEventListener('click', () => {
     app.viva = step(app.viva, { type: 'START_ANSWER', nowMs: performance.now() });
     app.dirty = true;
+    logSnapshotRow(app.lastSnap ?? toSnapshot(null, performance.now()), 'manual');
   });
   $('btn-done-answering')?.addEventListener('click', () => {
     app.viva = step(app.viva, { type: 'FINISH_ANSWER', nowMs: performance.now() });
     app.dirty = true;
+    logSnapshotRow(app.lastSnap ?? toSnapshot(null, performance.now()), 'manual');
   });
   $('btn-end')?.addEventListener('click', () => void endSession());
 

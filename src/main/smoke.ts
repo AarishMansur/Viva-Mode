@@ -1,12 +1,3 @@
-// src/main/smoke.ts
-// A camera-free end-to-end check of the renderer, driven by the main process.
-//
-// Enabled only with VIVA_SMOKE=1 (see `npm run smoke`). It opens the window,
-// walks the whole practice flow by clicking the real buttons, asserts on the
-// real DOM, writes screenshots to ./smoke, and exits with 0 or 1.
-//
-// This never touches the SDK or the network: practice mode is deliberately the
-// path that needs no API key.
 
 import { app, BrowserWindow } from 'electron';
 import { promises as fs } from 'node:fs';

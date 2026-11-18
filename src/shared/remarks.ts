@@ -1,11 +1,3 @@
-// src/shared/remarks.ts
-// The local "examiner's remark" — one line per answered question.
-//
-// Deliberately computed here, from the numbers on this laptop. No model, no
-// network, nothing sent to Presage. The point is a nudge you can act on.
-//
-// Copy rules (checked by test/stateMachine.test.ts): always relative to your
-// own baseline, never clinical.
 
 import type { QuestionResult } from './types.ts';
 import { fmtDuration } from './format.ts';

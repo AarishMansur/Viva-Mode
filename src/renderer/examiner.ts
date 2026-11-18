@@ -1,7 +1,3 @@
-// src/renderer/examiner.ts
-// A flat illustrated external examiner: spectacles, a tea cup, an attendance
-// register. Five SVG states, swapped by mood. No face tracking of the
-// examiner — this is a drawing, not a camera.
 
 import type { Mood } from '../shared/types';
 
@@ -15,8 +11,7 @@ const INK = '#2a2a28';
 
 function eyes(mood: Mood): string {
   if (mood === 'encouraging') {
-    // happy arcs
-    return `
+        return `
       <path d="M130 159 Q139 148 148 159" fill="none" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>
       <path d="M172 159 Q181 148 190 159" fill="none" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>`;
   }

@@ -1,11 +1,3 @@
-// src/shared/stateMachine.ts
-// The heart of Viva Mode: phases, adaptive-room hysteresis, and the
-// per-question recorder.
-//
-// `step()` MUTATES the state it is given and returns it. That keeps the
-// renderer loop allocation-free at ~30 packets/sec; tests simply assert on the
-// returned object. Everything time-related comes from an explicit `nowMs` so
-// the whole machine is deterministic and camera-free in tests.
 
 import {
   deltaPct,
@@ -28,69 +20,46 @@ import type {
   ValidationState,
 } from './types.ts';
 
-// --- thresholds -------------------------------------------------------------
-// Every magic number lives here so the README and the tests can point at one
-// table. Values are deliberately relative to the personal baseline.
 
 export const T = {
-  /** calibration floor: 60 s of settling in */
   CALIBRATION_MIN_MS: 60_000,
-  /** after this, offer "practice without signals" */
   CALIBRATION_MAX_MS: 120_000,
-  /** ≥ 20 usable pulse samples before the baseline is trustworthy */
   CALIBRATION_MIN_PULSE_SAMPLES: 20,
-  /** grace period before the "extend calibration" copy appears */
   CALIBRATION_EXTEND_MS: 75_000,
 
-  /** EMA time constants layered on top of the SDK's own windows */
   BREATH_TAU_S: 10,
   PULSE_TAU_S: 6,
 
-  /** breathing: pacer above +15 %, settled at or below +5 % */
   BREATH_ELEVATED: 0.15,
   BREATH_SETTLED: 0.05,
-  /** pulse fallback (used when breathing never became usable) */
   PULSE_ELEVATED: 0.1,
   PULSE_SETTLED: 0.03,
 
-  /** the room only steps after 8 s of genuinely settled breathing */
   SETTLED_HOLD_MS: 8_000,
-  /** no pacer strobe */
   PACER_COOLDOWN_MS: 20_000,
-  /** examiner mood changes at most this often */
   MOOD_COOLDOWN_MS: 6_000,
 
-  /** calm units per second; per-tick change is clamped to CALM_MAX_STEP */
   CALM_RATE_PER_S: 0.08,
   CALM_MAX_STEP: 0.08,
-  /** where the room drifts when breathing is unreadable */
   ROOM_NEUTRAL: 0.5,
 
-  /** talking for this long flips Think → Answer */
   TALKING_ONSET_MS: 1_200,
-  /** this much silence ends the answer */
   ANSWER_SILENCE_MS: 4_000,
-  /** hard cap so a stuck detector can't hang the session */
   ANSWER_MAX_MS: 240_000,
 
-  /** a breathing/pulse sample older than this is treated as stale */
   FRESH_MS: 20_000,
-  /** timeline resolution */
   TIMELINE_MS: 1_000,
   ROOM_TICK_MS: 500,
 
-  /** report: a pulse spike is descriptive only */
   SPIKE_PCT: 10,
 } as const;
 
-// --- state ------------------------------------------------------------------
 
 export interface CalibrationState {
   startMs: number;
   pulse: number[];
   breathing: number[];
   hrv: HrvSample[];
-  /** set once the baseline is locked */
   doneMs: number | null;
 }
 
@@ -116,15 +85,12 @@ export interface VivaState {
   baseline: Baseline | null;
   calibration: CalibrationState;
   calibrationTimedOut: boolean;
-  /** true when the session is running with questions only */
   practiceOnly: boolean;
 
   breathEma: number | null;
-  /** SDK-clock timestamp of the last EMA update — used only for dt */
   breathEmaAt: number | null;
   pulseEma: number | null;
   pulseEmaAt: number | null;
-  /** app-clock timestamp of the last accepted sample — used for freshness */
   breathSeenAt: number | null;
   pulseSeenAt: number | null;
 
@@ -141,23 +107,19 @@ export interface VivaState {
   calmHeldSince: number | null;
   mood: Mood;
   moodUntil: number;
-  /** which signal is currently steering the room */
   drive: 'breathing' | 'pulse' | 'none';
 
   current: CurrentQuestion | null;
   results: QuestionResult[];
   timeline: TimelinePoint[];
-  /** every stable HRV sample seen this session, for the report only */
   hrvSession: HrvSample[];
 
   lastRoomAt: number;
   lastTimelineAt: number;
 
   validation: ValidationState | null;
-  /** room log, drained by the renderer into an aria-live region */
   announcements: string[];
 
-  /** count of questions asked this session, including any abandoned one */
   asked: number;
 }
 
@@ -214,14 +176,13 @@ export function initialState(nowMs: number): VivaState {
   };
 }
 
-// --- helpers ----------------------------------------------------------------
 
 function say(s: VivaState, line: string): void {
   s.announcements.push(line);
   if (s.announcements.length > 12) s.announcements.shift();
 }
 
-/** Drain the room log. The renderer calls this once per frame. */
+
 export function drainAnnouncements(s: VivaState): string[] {
   if (s.announcements.length === 0) return [];
   const out = s.announcements.slice();
@@ -242,7 +203,7 @@ function setMood(s: VivaState, mood: Mood, now: number, force = false): void {
   s.moodUntil = now + T.MOOD_COOLDOWN_MS;
 }
 
-/** Is breathing fresh enough to steer the room? */
+
 function breathFresh(s: VivaState, now: number): boolean {
   return (
     s.breathEma != null &&
@@ -256,25 +217,18 @@ function pulseFresh(s: VivaState, now: number): boolean {
   return s.pulseEma != null && s.pulseSeenAt != null && now - s.pulseSeenAt < T.FRESH_MS;
 }
 
-/** Pick the signal that drives the room. Breathing first, pulse as fallback. */
+
 export function pickDrive(s: VivaState, now: number): 'breathing' | 'pulse' | 'none' {
-  // If breathing was calibrated at all, it is the only thing allowed to calm
-  // the room. A stale breathing signal means "hold and drift to neutral", not
-  // "infer calm from pulse" — otherwise losing your face for ten seconds would
-  // quietly reward you.
-  if (s.baseline?.breathing != null) {
+          if (s.baseline?.breathing != null) {
     return breathFresh(s, now) ? 'breathing' : 'none';
   }
   if (pulseFresh(s, now) && s.baseline?.pulse != null) return 'pulse';
   return 'none';
 }
 
-// --- ingestion --------------------------------------------------------------
 
 function ingest(s: VivaState, snap: Snapshot, now: number): void {
-  // Talking detection first: it gates the breathing EMA below, so the same
-  // packet that says "you are talking" must already freeze the smoother.
-  if (snap.talking != null) {
+      if (snap.talking != null) {
     if (snap.talking) {
       if (s.talkingSince == null) s.talkingSince = now;
       s.silenceSince = null;
@@ -285,10 +239,7 @@ function ingest(s: VivaState, snap: Snapshot, now: number): void {
     s.talking = snap.talking;
   }
 
-  // Pulse. Dedupe on the SDK's own timestamp: a packet may repeat the newest
-  // sample, and the 12 s average means several packets can carry the same one.
-  // `tsMs` is the app clock (performance.now), `sample.tsMs` is the SDK clock.
-  if (snap.pulse && (s.lastPulseTs == null || snap.pulse.tsMs > s.lastPulseTs)) {
+        if (snap.pulse && (s.lastPulseTs == null || snap.pulse.tsMs > s.lastPulseTs)) {
     s.lastPulseTs = snap.pulse.tsMs;
     if (pulseUsable(snap.pulse)) {
       const dt = s.pulseEmaAt == null ? 0 : (snap.pulse.tsMs - s.pulseEmaAt) / 1000;
@@ -299,9 +250,7 @@ function ingest(s: VivaState, snap: Snapshot, now: number): void {
     }
   }
 
-  // Breathing is only fed to the EMA while you are not talking. While talking
-  // the SDK's own value is invalid, so we freeze rather than smooth garbage.
-  if (snap.breathing && (s.lastBreathTs == null || snap.breathing.tsMs > s.lastBreathTs)) {
+      if (snap.breathing && (s.lastBreathTs == null || snap.breathing.tsMs > s.lastBreathTs)) {
     s.lastBreathTs = snap.breathing.tsMs;
     if (breathingUsable(snap.breathing) && s.talking !== true) {
       const dt = s.breathEmaAt == null ? 0 : (snap.breathing.tsMs - s.breathEmaAt) / 1000;
@@ -312,21 +261,17 @@ function ingest(s: VivaState, snap: Snapshot, now: number): void {
     }
   }
 
-  // HRV needs a 60 s still window; it is report-only, so we just keep the
-  // stable samples and never show it in the live UI.
-  if (snap.hrv && snap.hrv.stable && snap.hrv.confidence >= 50) {
+      if (snap.hrv && snap.hrv.stable && snap.hrv.confidence >= 50) {
     if (s.phase === 'calibrating') s.calibration.hrv.push(snap.hrv);
     if (s.hrvSession.length < 600) s.hrvSession.push(snap.hrv);
   }
 
-  // Expression is a soft hint only — it never drives the room.
-  if (s.current && snap.expression && snap.expression.confidence >= 60) {
+    if (s.current && snap.expression && snap.expression.confidence >= 60) {
     const label = EXPRESSION_LABELS[snap.expression.type];
     if (label && label !== 'neutral') s.current.expressionHint = label;
   }
 }
 
-// --- calibration ------------------------------------------------------------
 
 function completeCalibration(s: VivaState, now: number): void {
   const pulse = median(s.calibration.pulse);

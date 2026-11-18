@@ -1,6 +1,3 @@
-// test/stateMachine.test.ts
-// Camera-free tests for the adaptive logic. Run with `npm test` (node:test +
-// Node's built-in TypeScript type stripping).
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -66,7 +63,7 @@ function begin(nowMs = T0): VivaState {
   return step(initialState(nowMs), { type: 'CONSENT_GIVEN', nowMs });
 }
 
-/** 62 seconds of steady samples, one per second. */
+
 function calibrate(pulse = 70, breath = 14, nowMs = T0): VivaState {
   const s = begin(nowMs);
   for (let i = 1; i <= 62; i++) {
@@ -87,7 +84,7 @@ const Q: Question = {
   difficulty: 'core',
 };
 
-/** Drive the machine at 4 Hz, emitting one snapshot per step. */
+
 function run(
   s: VivaState,
   startMs: number,
@@ -103,7 +100,7 @@ function run(
   return startMs + steps * 250;
 }
 
-/** Let a test set the EMA exactly on the first sample of the think phase. */
+
 function resetBreathEma(s: VivaState): void {
   s.breathEma = null;
   s.breathEmaAt = null;
@@ -111,19 +108,16 @@ function resetBreathEma(s: VivaState): void {
   s.lastBreathTs = null;
 }
 
-// ── calibration ─────────────────────────────────────────────────────────────
 
 test('calibration needs both the 60 s floor and 20 usable pulse samples', () => {
   const s = begin();
-  // 40 s of perfect samples is not enough — the clock gate wins.
-  for (let i = 1; i <= 40; i++) {
+    for (let i = 1; i <= 40; i++) {
     step(s, { type: 'SNAPSHOT', snap: mkSnap(T0 + i * 1000, { pulse: 70, breath: 14 }) });
     step(s, { type: 'TICK', nowMs: T0 + i * 1000 });
   }
   assert.equal(s.phase, 'calibrating');
 
-  // 60 s in total, but only 5 usable pulse samples: still calibrating.
-  const sparse = begin();
+    const sparse = begin();
   for (let i = 1; i <= 60; i++) {
     step(sparse, { type: 'TICK', nowMs: T0 + i * 1000 });
     if (i % 12 === 0) {
@@ -149,7 +143,6 @@ test('calibration offers practice mode after 120 s without a usable pulse', () =
   assert.equal(s.calibrationTimedOut, true);
 });
 
-// ── phase transitions ───────────────────────────────────────────────────────
 
 test('1.2 s of talking flips Think to Answer', () => {
   const s = calibrate();
@@ -167,8 +160,7 @@ test('4 s of silence ends the answer and records the question', () => {
   const s = calibrate();
   step(s, { type: 'NEXT_QUESTION', question: Q, nowMs: T0 + 62_000 });
 
-  // Three seconds of thinking, then two seconds of talking.
-  let t = run(s, T0 + 62_000, 3, () => ({ talking: false, pulse: 70, breath: 14 }));
+    let t = run(s, T0 + 62_000, 3, () => ({ talking: false, pulse: 70, breath: 14 }));
   assert.equal(s.phase, 'think');
   t = run(s, t, 2, () => ({ talking: true, pulse: 70, breath: 14 }));
   assert.equal(s.phase, 'answer');
@@ -193,7 +185,6 @@ test('manual controls work when face detection never arrives', () => {
   assert.equal(s.results.length, 1);
 });
 
-// ── the adaptive room ───────────────────────────────────────────────────────
 
 test('elevated breathing shows the pacer', () => {
   const s = calibrate();

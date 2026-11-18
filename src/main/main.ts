@@ -1,16 +1,3 @@
-// src/main/main.ts
-// Electron main process.
-//
-// Responsibilities:
-//   1. Own the window and the camera permission grant (camera only, bundled
-//      page only).
-//   2. Own the SmartSpectra native session via bindSmartSpectraIpc(win).
-//   3. Serve the renderer's small local API: config, API key, settings,
-//      session files, delete-all.
-//
-// The renderer never talks to the network itself. The only outbound traffic
-// in the whole app is the SmartSpectra SDK's own key validation / metric
-// processing, plus (opt-in) SDK telemetry.
 
 import { app, BrowserWindow, dialog, ipcMain, Menu, session, shell } from 'electron';
 import { promises as fs } from 'node:fs';
@@ -29,9 +16,6 @@ const SDK_VERSION = SmartSpectraSDK.version;
 let mainWindow: BrowserWindow | null = null;
 let questions: Question[] = [];
 
-// ---------------------------------------------------------------------------
-// Question bank
-// ---------------------------------------------------------------------------
 
 async function loadQuestions(): Promise<Question[]> {
   const candidates = [
@@ -47,16 +31,12 @@ async function loadQuestions(): Promise<Question[]> {
         return parsed.questions;
       }
     } catch {
-      /* try the next location */
     }
   }
   console.error('[viva] question bank not found — falling back to an empty bank');
   return [];
 }
 
-// ---------------------------------------------------------------------------
-// Window
-// ---------------------------------------------------------------------------
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -75,14 +55,10 @@ function createWindow(): void {
       nodeIntegration: false,
       webSecurity: true,
       spellcheck: false,
-      // The viva timer and the room animation are the point of the app; never
-      // let Chromium throttle them down when the window loses focus.
-      backgroundThrottling: false,
+                  backgroundThrottling: false,
     },
   });
 
-  // The renderer is a bundled local page. Block popups and navigation so a
-  // stray link can never inherit this window's camera grant.
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https:\/\//.test(url)) void shell.openExternal(url);
     return { action: 'deny' };
@@ -99,16 +75,12 @@ function createWindow(): void {
   void mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   if (SMOKE) {
-    // Imported lazily so the smoke harness never runs in a normal session.
-    void import('./smoke').then((m) => m.runSmoke(mainWindow as BrowserWindow));
+        void import('./smoke').then((m) => m.runSmoke(mainWindow as BrowserWindow));
   }
 
   if (DEV) mainWindow.webContents.openDevTools({ mode: 'detach' });
 }
 
-// ---------------------------------------------------------------------------
-// IPC
-// ---------------------------------------------------------------------------
 
 function registerIpc(): void {
   ipcMain.handle('viva:getConfig', async (): Promise<AppConfig> => {
@@ -183,6 +155,15 @@ function registerIpc(): void {
 
   ipcMain.on('viva:log', (_e, line: string) => {
     if (DEV) console.log(`[renderer] ${line}`);
+  });
+
+  ipcMain.on('viva:logSnapshot', (_e, row: unknown) => {
+    void store.appendSignalLog(row);
+  });
+
+  ipcMain.handle('viva:resetSignalLog', async () => {
+    await store.resetSignalLog();
+    return { ok: true };
   });
 }
 

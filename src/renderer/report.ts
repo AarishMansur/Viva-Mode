@@ -1,9 +1,3 @@
-// src/renderer/report.ts
-// The private Calm Report: a session timeline with question markers, baseline
-// vs session numbers, and one card per question.
-//
-// Copy rules, enforced by review and by `test/copy.test.ts`:
-//   always relative ("vs your baseline", "settled back"), never clinical.
 
 import { Chart } from 'chart.js/auto';
 import type { QuestionResult, SessionRecord } from '../shared/types';
@@ -11,14 +5,12 @@ import { summarise } from '../shared/stateMachine';
 import { fmtClock, fmtDuration, fmtPct } from '../shared/format';
 import { remarkFor } from '../shared/remarks';
 
-// Re-exported so the renderer has one place to pull report formatting from.
 export { fmtClock, fmtDuration, fmtPct, remarkFor };
 
 function nearBaseline(deltaPct: number | null): boolean {
   return deltaPct != null && Math.abs(deltaPct) < 3;
 }
 
-// --- chart ------------------------------------------------------------------
 
 let chart: Chart | null = null;
 
@@ -383,9 +375,6 @@ export function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
-// --- PNG export -------------------------------------------------------------
-// Drawn by hand with Canvas 2D so there is no extra dependency and the export
-// is a single, self-contained card. Never auto-shared: the user picks a path.
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -416,8 +405,7 @@ export function buildReportPng(record: SessionRecord): string {
   const ctx = canvas.getContext('2d');
   if (!ctx) return '';
 
-  // background
-  const g = ctx.createLinearGradient(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, W, H);
   g.addColorStop(0, '#1b2530');
   g.addColorStop(1, '#131a20');
   ctx.fillStyle = g;

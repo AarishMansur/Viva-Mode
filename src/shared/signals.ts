@@ -1,16 +1,10 @@
-// src/shared/signals.ts
-// Turns one decoded `Metrics` protobuf packet into a flat `Snapshot`, plus the
-// small numeric helpers the adaptive logic needs (EMA, median, chip gating).
-//
-// No DOM, no Electron, no SDK imports — the decoded payload is typed
-// structurally so this file runs in Node for tests.
 
 import type { ChipState, HrvSample, Sample, Snapshot } from './types.ts';
 
-/** Anything that can carry a protobufjs `Long` or a plain number. */
+
 type ProtoTs = number | { toNumber(): number } | null | undefined;
 
-/** Convert a protobuf timestamp (µs since epoch, number or Long) to ms. */
+
 export function tsToMs(ts: ProtoTs): number {
   if (ts == null) return 0;
   if (typeof ts === 'number') return ts / 1000;
@@ -19,7 +13,7 @@ export function tsToMs(ts: ProtoTs): number {
   return Number.isFinite(n) ? n / 1000 : 0;
 }
 
-/** The subset of the SDK's decoded `Metrics` shape we actually read. */
+
 export interface DecodedMeasurement {
   value?: number | null;
   stable?: boolean | null;
@@ -62,7 +56,7 @@ export interface DecodedMetrics {
   } | null;
 }
 
-/** Expression type codes from `ExpressionType`. */
+
 export const EXPRESSION_LABELS: Record<number, string> = {
   1: 'angry',
   2: 'contempt',
@@ -104,11 +98,7 @@ function toHrv(
   };
 }
 
-/**
- * Flatten one decoded packet. The SDK's `metrics` event carries the windowed
- * slice since the previous emit, so we always take the newest entry of each
- * array and never assume the arrays are cumulative.
- */
+
 export function toSnapshot(decoded: DecodedMetrics | null, fallbackNowMs: number): Snapshot {
   const tsCandidates: number[] = [];
   const push = (v: number) => {
@@ -155,7 +145,7 @@ export function toSnapshot(decoded: DecodedMetrics | null, fallbackNowMs: number
   };
 }
 
-/** Usable sample: stable, confident enough, and inside the SDK's valid range. */
+
 export const USABLE_CONFIDENCE = 50;
 export const PULSE_MIN = 40;
 export const PULSE_MAX = 110;
@@ -182,12 +172,7 @@ export function breathingUsable(s: Sample | null): s is Sample {
   );
 }
 
-/**
- * Continuous-time exponential moving average.
- *
- * `dtSec` is the gap since the previous accepted sample, so an irregular
- * packet rate does not change the effective smoothing.
- */
+
 export function ema(prev: number | null, next: number, dtSec: number, tauSec: number): number {
   if (prev == null) return next;
   if (!(dtSec > 0)) return prev;
@@ -195,7 +180,7 @@ export function ema(prev: number | null, next: number, dtSec: number, tauSec: nu
   return prev + alpha * (next - prev);
 }
 
-/** Median of a numeric array. Returns null for an empty array. */
+
 export function median(values: number[]): number | null {
   if (values.length === 0) return null;
   const sorted = [...values].sort((a, b) => a - b);
@@ -206,13 +191,13 @@ export function median(values: number[]): number | null {
   return lo != null && hi != null ? (lo + hi) / 2 : null;
 }
 
-/** Signed percentage difference from a baseline. */
+
 export function deltaPct(value: number, baseline: number | null): number | null {
   if (baseline == null || baseline === 0) return null;
   return ((value - baseline) / baseline) * 100;
 }
 
-/** Short "vs your baseline" phrase, used in copy and in the report. */
+
 export function vsBaseline(value: number, baseline: number | null): string {
   const d = deltaPct(value, baseline);
   if (d == null) return 'no baseline yet';
